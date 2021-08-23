@@ -1,5 +1,4 @@
-function [ch, tim] = getkey(N,nonascii)
-
+function [ch, tim] = getkey(N, nonascii)
 % GETKEY - get a keypress
 %   CH = GETKEY waits for a single keypress and returns the ASCII code. It
 %   accepts all ascii characters, including backspace (8), space (32),
@@ -9,39 +8,44 @@ function [ch, tim] = getkey(N,nonascii)
 %   CH = GETKEY(N) waits for N keypresses and returns their ASCII codes.
 %   GETKEY(1) is the same as GETKEY without arguments.
 %
-%   GETKEY('non-ascii') or GETKEY(N,'non-ascii') uses non-documented
+%   GETKEY('non-ascii') or GETKEY(N, 'non-ascii') uses non-documented
 %   matlab features to return a string describing the key pressed.
-%   In this way keys like ctrl, alt, tab etc. can also distinguished.
+%   In this way, keys like ctrl, alt, tab etc. can also distinguished.
 %   The return is a string (when N = 1) or a cell array of strings.
 %
-%   [CH,T] = GETKEY(...) also returns the time between the start of the
-%   function and each keypress. This is, however, not that accurate.
+%   [CH, T] = GETKEY(...) also returns the time between the start of the
+%   function and each keypress. This is, however, not very accurate.
 %
-%   This function is kind of a workaround for getch in C. It uses a modal,
+%   This function is kind of a workaround for "getch" in C. It uses a modal,
 %   but non-visible window, which does show up in the taskbar.
 %   C-language keywords: KBHIT, KEYPRESS, GETKEY, GETCH
+%  
+%   Example 1 - get a single ascii key
+%      fprintf('\nPress any key: ') ;
+%      ch = getkey ;
+%      fprintf('%c\n',ch) ;
 %
-%   Examples:
-%
-%    fprintf('\nPress any key: ') ;
-%    ch = getkey ;
-%    fprintf('%c\n',ch) ;
-%
-%    fprintf('\nPress the Ctrl-key within 3 presses: ') ;
-%    ch = getkey(3,'non-ascii')
-%    if ismemmber('control', ch),
-%      fprintf('OK\n') ;
-%    else
-%      fprintf(' ... wrong keys ...\n') ;
-%    end
+%   Example 2 - wait for a specific key
+%      fprintf('\nPress the Ctrl-key within 3 presses: ') ;
+%      ch = getkey(3,'non-ascii')
+%      if ismember('control', ch), fprintf('OK\n') ;
+%      else fprintf(' ... wrong keys ...\n') ; end
+%    
+%   Example 3 - Typing game
+%       S = 'abcdefghjiklm' ; 
+%       fprintf('Type "%s" as fast as possible ...\n', S) ;
+%       [C, T] = getkey(numel(S)) ;
+%       C = char(C) ; T = T(end)-T(1) ;
+%       if ~isequal(S, C), fprintf('OOPS!!! ') ; end
+%       fprintf('You typed "%s" in %.2f seconds.\n', C, T) ;
 %
 %  See also INPUT, UIWAIT
 %           GETKEYWAIT (File Exchange)
 
 % for Matlab 6.5 and higher
-% version 2.0 (jun 2012)
+% version 2.1 (feb 2019)
 % author : Jos van der Geest
-% email  : jos@jasen.nl
+% email  : samelinoa@gmail.com
 %
 % History
 % 1.0 2005 - creation
@@ -50,17 +54,18 @@ function [ch, tim] = getkey(N,nonascii)
 % 1.3 jan 2012 - modified a few properties, included check is figure still
 %            exists (after comment on FEX by Andrew).
 % 2.0 jun 2012 - added functionality to accept multiple key presses
+% 2.1 feb 2019 - mondernised, added timing example
 
 t00 = tic ; % start time of this function
 
 % check the input arguments
-error(nargchk(0,2,nargin))
+narginchk(0,2)
 switch nargin
     case 0
         nonascii = '' ;
         N = 1 ;
     case 1
-        if ischar(N),
+        if ischar(N)
             nonascii = N ;
             N = 1 ;
         else
@@ -73,14 +78,14 @@ if numel(N) ~= 1 || ~isnumeric(N) || N < 1 || fix(N) ~= N
 end
 
 % Determine the callback string to use
-if strcmpi(nonascii,'non-ascii'),
+if strcmpi(nonascii,'non-ascii')
     % non-ascii characters are accepted
     nonascii = true ;
-    callstr = 'set(gcbf,''Userdata'',get(gcbf,''Currentkey'')) ; uiresume ' ;
+    callstr = 'set(gcbf, ''Userdata'', get(gcbf, ''Currentkey'')) ; uiresume ' ;
 elseif isempty(nonascii)
     nonascii = false ;
     % only standard ascii characters are accepted
-    callstr = 'set(gcbf,''Userdata'',double(get(gcbf,''Currentcharacter''))) ; uiresume ' ;
+    callstr = 'set(gcbf, ''Userdata'', double(get(gcbf, ''Currentcharacter''))) ; uiresume ' ;
 else
     error('String argument should be the string ''non-ascii''') ;
 end
@@ -88,12 +93,12 @@ end
 % Set up the figure
 % May be the position property  should be individually tweaked to avoid visibility
 fh = figure(...
-    'name','Press a key', ...
-    'keypressfcn',callstr, ...
-    'windowstyle','modal',...
-    'numbertitle','off', ...
-    'position',[0 0  1 1],...
-    'userdata','timeout') ;
+    'name', 'Press a key', ...
+    'keypressfcn', callstr, ...
+    'windowstyle', 'modal', ...
+    'numbertitle', 'off', ...
+    'position', [0 0 1 1], ... % really small in the corner
+    'userdata', 'timeout') ;
 try
     ch = cell(1,N) ;
     tim = zeros(1,N) ;
@@ -105,7 +110,7 @@ try
         uiwait ;
         tim(k) = toc(t00) ; % get the time of the key press
         ch{k} = get(fh,'Userdata') ;  % and the key itself
-        if isempty(ch{k}),
+        if isempty(ch{k})
             if nonascii
                 ch{k} = NaN ;
             else
