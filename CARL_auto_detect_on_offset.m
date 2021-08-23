@@ -1,4 +1,4 @@
-function segments = CARL_AutoDetectOnOffset_170905(speechSignal,ind, segments)
+function segments = CARL_auto_detect_on_offset(speechSignal,ind, segments)
     
 % This function determines the on-and offset of a single speech sample as
 % created by the main function. To determine the on- and offset, the

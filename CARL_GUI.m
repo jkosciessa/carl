@@ -1,4 +1,4 @@
-classdef CARL_GUI_150914 < handle
+classdef CARL_GUI < handle
 
     % This class and the accompanying functions show the extracted words
     % and play the associated audio. Segments can be refined by selecting
@@ -67,7 +67,7 @@ classdef CARL_GUI_150914 < handle
     end
     
     methods
-        function this = CARL_GUI_150914(varargin)                           % IMPORTANT: This needs to be changed to the function name!
+        function this = CARL_GUI(varargin)
             global ind pdat
             this.AudioData  = varargin{1};
             if isempty(varargin{2})

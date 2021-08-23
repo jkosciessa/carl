@@ -1,4 +1,4 @@
-function [segments, Fs] = CARL_getVoiceSegments_150911(pdat, info)
+function [segments, Fs] = CARL_get_voice_segments(pdat, info)
 
     segments            = [];
     tmp.info            = audioinfo([pdat.dataCon, info.ID,'.wav']);
@@ -16,7 +16,7 @@ function [segments, Fs] = CARL_getVoiceSegments_150911(pdat, info)
             tmp.locEnd = ind*chunkSegment + chunkSegment;
         end;
         [x,Fs] = audioread([pdat.dataCon,info.ID,'.wav'], [tmp.locBeg tmp.locEnd]);      % load chunk
-        [segments, Fs] = CARL_detectVoiced_141203(x, Fs, tmp, segments);
+        [segments, Fs] = CARL_detect_voiced(x, Fs, tmp, segments);
         clear x;
         tmp.previousEnd = max(segments{2,size(segments,2)});
     end;
