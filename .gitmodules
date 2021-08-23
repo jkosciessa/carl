@@ -1,0 +1,3 @@
+[submodule "external/audioeditor"]
+	path = external/audioeditor
+	url = https://github.com/ianesten/audioeditor
