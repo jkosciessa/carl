@@ -1,0 +1,11 @@
+*
+!*.*
+!*/
+*.m~
+*.xlsx
+*.mat
+*.png
+*.txt
+*.csv
+.DS_Store
+._*
