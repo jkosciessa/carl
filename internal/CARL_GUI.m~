@@ -67,7 +67,7 @@ classdef CARL_GUI < handle
     end
     
     methods
-        function this = CARL_GUI(varargin)
+        function this = CARL_GUI(varargin)                           % IMPORTANT: This needs to be changed to the function name!
             global ind pdat
             this.AudioData  = varargin{1};
             if isempty(varargin{2})
@@ -163,7 +163,9 @@ classdef CARL_GUI < handle
             % Create a plot in the axes.
 
             currentdata = this.AudioData{1,ind}(1:end);
-            this.ChannelHandles = plot(this.AxesHandles, currentdata(1:end));
+            % linearly rescale audio signal to lie between -1 and 1
+            currentdata_res = (1--1)/(max(currentdata)-min(currentdata))*(currentdata-max(currentdata))+1;
+            this.ChannelHandles = plot(this.AxesHandles, currentdata_res(1:end), 'k');
             xlim([0 max(this.AudioData{2,ind}(1:end)-this.AudioData{2,ind}(1))])
             set(gca,'XTickLabel', '' );                                             % labels would be in sample points
             if size(this.AudioData(:,ind),1) > 4 && ~isempty(this.AudioData{5,ind})
@@ -319,7 +321,7 @@ classdef CARL_GUI < handle
             end;
             
             % Assign the GUI a name to appear in the window title.
-            set(this.FigureHandle,'Name','Audio Analysis GUI')
+            set(this.FigureHandle,'Name','Computer-Assisted Response Labeler (CARL)')
             % Move the GUI to the center of the screen.
             movegui(this.FigureHandle,'center')
             % Make the GUI visible.
@@ -358,10 +360,15 @@ classdef CARL_GUI < handle
                 if max(this.AudioData{2,ind-1}) >= tmp.newonset
                     % update segments structure
                     tmp.prevonset = min(this.AudioData{2,ind-1});
-                    [this.AudioData{1,ind-1},~] = audioread([pdat.dataCon, this.ID,'.wav'], ...
-                        [tmp.prevonset tmp.offset]); % reload data
+                    [x,~] = audioread([pdat.audioFile], ...
+                        [tmp.prevonset tmp.offset], 'double'); % reload data
+                    this.AudioData{1,ind-1} = mean(x,2);
                     this.AudioData{2,ind-1} = [tmp.prevonset:tmp.offset]';
                     this.AudioData{4,ind-1} = [];       % erase previous coding if available
+                    this.AudioData{5,ind-1} = this.AudioData{5,ind} + (tmp.prevonset-tmp.onset);
+                    
+                    % correct index for new positions
+                    % the new index is the difference between 
                     this.AudioData(:,ind)   = [];       % delete now obsolete trial
                     
                     % save new structure
@@ -372,17 +379,19 @@ classdef CARL_GUI < handle
                     updatePlot(this);
                 else 
                     % update segments structure
-                    [this.AudioData{1,ind},~] = audioread([pdat.dataCon, this.ID,'.wav'], ...
-                        [tmp.newonset tmp.offset]); % reload data
+                    [x,~] = audioread([pdat.audioFile], ...
+                        [tmp.newonset tmp.offset], 'double'); % reload data
+                    this.AudioData{1,ind} = mean(x,2);
                     this.AudioData{2,ind} = [tmp.newonset:tmp.offset]';
-                    if ~isempty(this.AudioData{5,ind}) && ~isempty(this.AudioData{7,ind})
-                        tmp.findNewLocMarked = find(this.AudioData{2,ind} == min(this.AudioData{7,ind}));
-                        % save all values:
-                        % tmp.NewLocsMarked = [tmp.findNewLocMarked:tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
-                        % save only first and last value:
-                        tmp.NewLocsMarked = [tmp.findNewLocMarked;tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
-                        this.AudioData{5,ind} = tmp.NewLocsMarked;
-                    end;
+%                     if ~isempty(this.AudioData{5,ind}) && ~isempty(this.AudioData{7,ind})
+%                         tmp.findNewLocMarked = find(this.AudioData{2,ind} == min(this.AudioData{7,ind}));
+%                         % save all values:
+%                         % tmp.NewLocsMarked = [tmp.findNewLocMarked:tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
+%                         % save only first and last value:
+%                         tmp.NewLocsMarked = [tmp.findNewLocMarked;tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
+%                         this.AudioData{5,ind} = tmp.NewLocsMarked;
+%                     end;
+                    this.AudioData{5,ind} = this.AudioData{5,ind} + (tmp.onset-tmp.newonset);
                     % update plot
                     updatePlot(this);
                 end;
@@ -403,18 +412,19 @@ classdef CARL_GUI < handle
                 if tmp.newoffset >= min(this.AudioData{2,ind+1})
                     % update segments structure
                     tmp.nextoffset = max(this.AudioData{2,ind+1});
-                    [this.AudioData{1,ind+1},~] = audioread([pdat.dataCon, this.ID,'.wav'], ...
-                        [tmp.onset tmp.nextoffset]); % reload data
+                    [x,~] = audioread([pdat.audioFile], ...
+                        [tmp.onset tmp.nextoffset], 'double'); % reload data
+                    this.AudioData{1,ind+1} = mean(x,2);
                     this.AudioData{2,ind+1} = [tmp.onset:tmp.nextoffset]';
                     this.AudioData{4,ind+1} = [];       % erase previous coding if available
-                    if ~isempty(this.AudioData{5,ind+1}) && ~isempty(this.AudioData{7,ind+1})
-                        tmp.findNewLocMarked = find(this.AudioData{2,ind+1} == min(this.AudioData{7,ind+1}));
-                        % save all values:
-                        % tmp.NewLocsMarked = [tmp.findNewLocMarked:tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
-                        % save only first and last value:
-                        tmp.NewLocsMarked = [tmp.findNewLocMarked;tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
-                        this.AudioData{5,ind+1} = tmp.NewLocsMarked;
-                    end;
+%                     if ~isempty(this.AudioData{5,ind+1}) && ~isempty(this.AudioData{7,ind+1})
+%                         tmp.findNewLocMarked = find(this.AudioData{2,ind+1} == min(this.AudioData{7,ind+1}));
+%                         % save all values:
+%                         % tmp.NewLocsMarked = [tmp.findNewLocMarked:tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
+%                         % save only first and last value:
+%                         tmp.NewLocsMarked = [tmp.findNewLocMarked;tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
+%                         this.AudioData{5,ind+1} = tmp.NewLocsMarked;
+%                     end;
                     this.AudioData(:,ind)   = [];       % delete now obsolete trial
                     
                     % save new structure
@@ -424,17 +434,18 @@ classdef CARL_GUI < handle
                     updatePlot(this);
                 else 
                     % update segments structure
-                    [this.AudioData{1,ind},~] = audioread([pdat.dataCon, this.ID,'.wav'], ...
-                        [tmp.onset tmp.newoffset]); % reload data
+                    [x,~] = audioread([pdat.audioFile], ...
+                        [tmp.onset tmp.newoffset], 'double'); % reload data
+                    this.AudioData{1,ind} = mean(x,2);
                     this.AudioData{2,ind} = [tmp.onset:tmp.newoffset]';
-                    if ~isempty(this.AudioData{5,ind}) && ~isempty(this.AudioData{7,ind})
-                        tmp.findNewLocMarked = find(this.AudioData{2,ind} == min(this.AudioData{7,ind}));
-                        % save all values:
-                        % tmp.NewLocsMarked = [tmp.findNewLocMarked:tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
-                        % save only first and last value:
-                        tmp.NewLocsMarked = [tmp.findNewLocMarked;tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
-                        this.AudioData{5,ind} = tmp.NewLocsMarked;
-                    end;
+%                     if ~isempty(this.AudioData{5,ind}) && ~isempty(this.AudioData{7,ind})
+%                         tmp.findNewLocMarked = find(this.AudioData{2,ind} == min(this.AudioData{7,ind}));
+%                         % save all values:
+%                         % tmp.NewLocsMarked = [tmp.findNewLocMarked:tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
+%                         % save only first and last value:
+%                         tmp.NewLocsMarked = [tmp.findNewLocMarked;tmp.findNewLocMarked+size(this.AudioData{5,ind},1)]';
+%                         this.AudioData{5,ind} = tmp.NewLocsMarked;
+%                     end;
                     % update plot
                     updatePlot(this);
                 end;
@@ -495,24 +506,31 @@ classdef CARL_GUI < handle
         function playbutton_Callback(this, ~, ~)
             global ind player lineobj
             
-            if strcmp(this.version, 'Checking')
+            if strcmp(this.version, 'Checking') || get(this.autostart, 'Value')==1 && ~isempty(this.AudioData{5,ind})
                 % sound(this.AudioData{1,ind}(1:end), this.Fs);
                 tmp.begin = min(this.AudioData{5,ind});
                 tmp.end = max(this.AudioData{5,ind});
-                player = audioplayer(this.AudioData{1,ind}(tmp.begin:tmp.end), this.Fs);
+                 % linearly rescale audio signal to lie between -1 and 1
+                currentAudio = this.AudioData{1,ind}(tmp.begin:tmp.end);
+                currentAudio_res = (1--1)/(max(currentAudio)-min(currentAudio))*(currentAudio-max(currentAudio))+1;
+                player = audioplayer(currentAudio_res, this.Fs);
                 play(player)
                 lineobj = line([tmp.begin,tmp.begin],[-1,1],'color','r', 'linewidth', 1);
+                lineAtBegin = 0;
                 end_time = length(this.AudioData{1,ind}(tmp.begin:tmp.end))/this.Fs;
             else
-                player = audioplayer(this.AudioData{1,ind}(1:end), this.Fs);
+                currentAudio = this.AudioData{1,ind}(1:end);
+                currentAudio_res = (1--1)/(max(currentAudio)-min(currentAudio))*(currentAudio-max(currentAudio))+1;
+                player = audioplayer(currentAudio_res, this.Fs);
                 play(player)
-                lineobj = line([0,0],[-1,1],'color','r', 'linewidth', 1);
+                lineobj = line([0,0],[-1,1],'color','r', 'linewidth', 1); 
+                lineAtBegin = 1;
                 end_time = length(this.AudioData{1,ind})/this.Fs;
             end;
             tic                                                             % start Matlab timer
             t=toc;                                                          % get the time since the timer started
             while t<end_time && ishandle(lineobj)
-                if strcmp(this.version, 'Checking')
+                if lineAtBegin ~= 1
                     set(lineobj, 'xdata', (tmp.begin)+t*[this.Fs,this.Fs])                  % move line to the time indicated by t
                 else set(lineobj, 'xdata', t*[this.Fs,this.Fs])
                 end;
@@ -573,12 +591,15 @@ classdef CARL_GUI < handle
         end;
         
         function figureButtonUpCallback(this)                               % Stop selection drag
-          if get(this.seperate,'Value') == 0
+          %if get(this.seperate,'Value') == 0
               set(this.FigureHandle, 'WindowButtonMotionFcn', '');
               [xd1, xd2] = getSelectionSampleNumbers(this);
+              if get(this.autostart, 'Value')==1
+                    playbutton_Callback(this);
+              end;
     %           data = getCurrentData(this, xd1(1), xd2(1));
     %           this.Analyzer.analyze(data, this.Fs);
-          end;
+          %end;
         end
 
         function addSelectorTool(this)
@@ -616,9 +637,9 @@ classdef CARL_GUI < handle
                 this.AudioData{6,ind} = [];
                 this.AudioData{7,ind} = [];
             end;
-            this.AudioData{5,ind} = round(xd1:xd2)';
             tmp.line1 = round(xd1(1));
             tmp.line2 = round(xd2(1));
+            this.AudioData{5,ind} = [tmp.line1, tmp.line2];
             if tmp.line1 == 0
                 tmp.line1 = 1;
             end;
@@ -702,18 +723,18 @@ classdef CARL_GUI < handle
 
         % Enable dragging of selection lines at the mouse click point
         function selectButtonDownCallback(this, hObject)
-          if strcmp(get(this.FigureHandle,'SelectionType'),'normal')
+          %if strcmp(get(this.FigureHandle,'SelectionType'),'normal')
             [r, c] = find(this.SelectorLines == hObject);
             hLine = this.SelectorLines(1,:);
             set(this.FigureHandle, 'WindowButtonMotionFcn', ...
                 @(hObject, eventdata) selectLineDragCallback(this, hLine));
-          end
+          %end
         end
 
         % Drag selection lines
         function selectLineDragCallback(this, hLine)
             global ind
-            if strcmp(get(this.FigureHandle,'SelectionType'),'normal')
+            %if strcmp(get(this.FigureHandle,'SelectionType'),'normal')
                 maxxd = size(this.AudioData{1,ind}(1:end), 1);
                 cp = get(this.AxesHandles(1), 'CurrentPoint');
                 if cp(1,1) > maxxd
@@ -726,7 +747,7 @@ classdef CARL_GUI < handle
                 xd(1:2) = get(this.SelectorLines(1), 'XData');
                 xd(3:4) = get(this.SelectorLines(2), 'XData');
                 set(this.SelectorPatchHandle, 'XData', xd);
-            end
+            %end
         end
 
         end % hidden methods
@@ -789,7 +810,9 @@ classdef CARL_GUI < handle
                 ['Time since the last detected segment: ', ...
                 sprintf('%.2f',secsincelast),' s'])
             currentAudio = this.AudioData{1,ind}(1:end); % update the audio segment
-            this.ChannelHandles = plot(this.AxesHandles, currentAudio);
+            % linearly rescale audio signal to lie between -1 and 1
+            currentAudio_res = (1--1)/(max(currentAudio)-min(currentAudio))*(currentAudio-max(currentAudio))+1;
+            this.ChannelHandles = plot(this.AxesHandles, currentAudio_res, 'k');
             xlim([0 max(this.AudioData{2,ind}(1:end)-this.AudioData{2,ind}(1))]);
             set(gca,'XTickLabel', '' ); % hide labels which would be in sample points
             set(this.ChannelHandles, 'ButtonDownFcn', ...

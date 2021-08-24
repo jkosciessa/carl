@@ -1,4 +1,6 @@
-function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments)
+function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments,distance_s)
+
+    % based on http://www.mathworks.com/matlabcentral/fileexchange/28826-silence-removal-in-speech-signals/content/detectVoiced.m
 
     y = abs(hilbert(x));
     sampling_factor = round(size(x,1)/Fs);
@@ -11,9 +13,6 @@ function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments)
     y = filter(b,a,y);
     y = y.^2;
 
-
-    factor = 1;
-
     z = zeros(size(y));
     criterion = trimmean(abs(y),0.1)+ 0.5*std(abs(y));                                                 % define threshold (mean + std)!
 
@@ -22,7 +21,7 @@ function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments)
     zy = find(z==1);
 
     for ind = 2: size(zy,1)
-        if diff([zy(ind-1) zy(ind)]) < factor*Fs
+        if diff([zy(ind-1) zy(ind)]) < distance_s*Fs
             z(zy(ind-1):zy(ind)) = 1;
         end;
     end;
@@ -72,24 +71,17 @@ function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments)
         end
     end
 
-%% plot results
-
-    % h = figure;
-    % v = zeros(size(y));
-    % v(Limits) = 1;
-    % plot(v*max(abs(y)));
-    % hold on; plot(abs(y), 'r');
 
 %% write final segments into structure
 
     for i=1:size(Limits,1)
         if temp.locBeg+Limits(i,1) <= temp.previousEnd + 1
-            segments{1, end} = [segments{1, end}; x(Limits(i,1):Limits(i,2))];                              % write recording 
-            segments{2, end} = [segments{2, end}; (temp.locBeg+Limits(i,1):temp.locBeg+Limits(i,2)).'];     % write position in recording
+            segments{1, end} = [segments{1, end}; x(Limits(i,1):Limits(i,2))]';                              % write recording 
+            segments{2, end} = [segments{2, end}; (temp.locBeg+Limits(i,1):temp.locBeg+Limits(i,2))'];     % write position in recording
             segments{3, end} = segments{3, end} + size(segments{2, end},1)./Fs;                            % write length in seconds
         else
-            segments{1, end+1} = x(Limits(i,1):Limits(i,2));                            % write recording 
-            segments{2, end} = (temp.locBeg+Limits(i,1):temp.locBeg+Limits(i,2)).';     % write position in recording
+            segments{1, end+1} = x(Limits(i,1):Limits(i,2))';                            % write recording 
+            segments{2, end} = (temp.locBeg+Limits(i,1):temp.locBeg+Limits(i,2))';     % write position in recording
             segments{3, end} = size(segments{2, end},1)./Fs;                            % write length in seconds
         end;
     end

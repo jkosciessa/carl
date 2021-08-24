@@ -1,0 +1,71 @@
+% This is an example script that segments audio data and
+% can be used to transcribe verbal responses.
+
+% CARL's detection mechanism and audio
+% player are adapted from the following two sources:
+% Ressource: http://class.ee.iastate.edu/mmina/EE186/labs/Audio.htm
+% Ressource: http://www.mathworks.de/de/help/signal/ref/spectrogram.html
+
+% There are two options here: 
+%   (1) a continuous recording that first has to be segmented 
+%   into potential words (with some post-hoc control)
+%   (2) a structure, in which every recording corresponds to a
+%   single word/response/trial.
+
+%% add CARL ressources
+
+pn.CARL_internal = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/CARL/internal/';
+addpath(pn.CARL_internal)
+
+%% load audio data (as .wav or .mat file)
+
+pn.dataIN = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/examples/1105_StroopData_1.mat';
+load(pn.dataIN)
+
+AudioData = StroopAudio; clear StroopAudio;
+
+%% pre-sequence voice segments: try to mark on- & offsets of the voice segments                            
+                                                                            
+% based on http://www.mathworks.com/matlabcentral/fileexchange/28826-silence-removal-in-speech-signals/
+
+segments = [];
+for trial = 1:size(AudioData.audio,2)
+    disp([num2str(trial), '/', num2str(size(AudioData.audio,2))]);
+    Audio = AudioData.audio{1,trial}(1,:);
+    Fs = AudioData.s.SampleRate;
+	segments = CARL_auto_detect_on_offset(Audio, Fs, trial, segments);
+end; clear trial;
+
+%% create GUI and transcribe words manually                                
+
+ind = []; % empty cell -> start at last empty trial
+Fs = AudioData.s.SampleRate;
+pdat = [];
+info.ID = '0';
+CARL_GUI(segments, ind, Fs, pdat, info.ID, 'Labeling');
+
+% Stop here and label everything
+% Output to save: segments, Fs
+
+
+%% 2nd example: continuous data
+
+pn.CARL_internal = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/CARL/internal/';
+addpath(pn.CARL_internal)
+
+%% load audio data (as .wav or .mat file)
+
+pn.dataIN = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/examples/3118_Merlin2.wav';
+load(pn.dataIN)
+
+% pre-sequencing voice segments                                            % http://www.mathworks.com/matlabcentral/fileexchange/28826-silence-removal-in-speech-signals/content/detectVoiced.m
+% get segments with voice (iterate through single audio file)
+[segments, Fs] = CARL_getVoiceSegments_150911(pdat, info);
+% try to mark on- & offsets of the actual voice segments
+for ind = 1:size(segments,2)
+    if segments{3,ind} < 4 % if segment is shorter than x seconds
+        segments = CARL_AutoDetectOnOffset_150911(segments,ind);
+    end;
+end; clear ind;
+
+
