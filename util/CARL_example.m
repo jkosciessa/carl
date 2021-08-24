@@ -1,11 +1,6 @@
 % This is an example script that segments audio data and
 % can be used to transcribe verbal responses.
 
-% CARL's detection mechanism and audio
-% player are adapted from the following two sources:
-% Ressource: http://class.ee.iastate.edu/mmina/EE186/labs/Audio.htm
-% Ressource: http://www.mathworks.de/de/help/signal/ref/spectrogram.html
-
 % There are two options here: 
 %   (1) a continuous recording that first has to be segmented 
 %   into potential words (with some post-hoc control)
