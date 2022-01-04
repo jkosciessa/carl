@@ -53,14 +53,11 @@ function segments = CARL_auto_detect_on_offset(speechSignal, Fs, ind, segments, 
     segments{3,ind} = numel(speechSignal)/Fs;
     segments{4,ind} = '';
     segments{5,ind} = [];
-    segments{6,ind} = [];
-    segments{7,ind} = [];
     if ~isempty(min_absdiff) && ~isempty(max_absdiff)
         xd1 = min_absdiff;
         xd2 = max_absdiff;
         % save only edges:
         segments{5,ind} = [xd1;xd2]';
-        segments{6,ind} = [];
     end
 
 end

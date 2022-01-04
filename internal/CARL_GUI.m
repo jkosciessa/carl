@@ -608,8 +608,6 @@ classdef CARL_GUI < handle
             end
             if size(this.AudioData(:,ind),1) > 4
                 this.AudioData{5,ind} = [];
-                this.AudioData{6,ind} = [];
-                this.AudioData{7,ind} = [];
             end;
             tmp.line1 = round(xd1(1));
             tmp.line2 = round(xd2(1));
@@ -621,10 +619,7 @@ classdef CARL_GUI < handle
                 tmp.line2 = size(this.AudioData{2,ind},1)-1;
             end;
             % save all values for the word:
-            % this.AudioData{6,ind} = (this.AudioData{1,ind}(tmp.line1:tmp.line2));
-            % this.AudioData{7,ind} = (this.AudioData{2,ind}(tmp.line1:tmp.line2));
-            % save only beginning and end of word:
-            this.AudioData{7,ind} = [this.AudioData{2,ind}(tmp.line1);this.AudioData{2,ind}(tmp.line2)];
+            this.AudioData{5,ind} = [tmp.line1, tmp.line2];
             assignin('base', this.inputname, this.AudioData)
         end
 

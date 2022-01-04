@@ -12,7 +12,9 @@
 pn.CARL_internal = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/CARL/internal/';
 addpath(pn.CARL_internal)
 
-%% prespecified trial structure
+%% Option 1: pre-existing trial structure
+% Use this if you have a seperate voice recording for each to-be-labelled
+% trial, e.g., recorded within Psychtoolbox.
 
 % load audio data (as .wav or .mat file)
 
@@ -23,7 +25,7 @@ AudioData = StroopAudio; clear StroopAudio;
 
 % pre-sequence voice segments: try to mark on- & offsets of the voice segments                            
                                                                             
-segments = cell(7,1);
+segments = cell(5,1);
 for trial = 1:size(AudioData.audio,2)
     disp([num2str(trial), '/', num2str(size(AudioData.audio,2))]);
     Audio = AudioData.audio{1,trial}(1,:);
@@ -41,16 +43,19 @@ CARL_GUI(segments, ind, Fs, pn, info.ID, 'Labeling');
 % Stop here and label everything
 % Output to save: segments, Fs
 
-%% only if continous recording: split into separate word chunks first
+%% Alternative for continous recording: automatically split into separate word 'chunks' first
 
-pn.audioFile = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/examples/Cyborg-ignition-countdown.wav';
+pn.audioFile = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/examples/Counting-from-1-to-20.wav';
 
 % pre-sequencing voice segments (iterate through single audio file)
+% this file is very short, if there are very long recordings, they have to
+% be chunked, here I use a chunk siye of 20s, with an assumed pause between
+% words of 0.5s
 [segments, Fs] = CARL_get_voice_segments(pn.audioFile, 20, .5);
 % try to mark on- & offsets of the actual voice segments
 for trial = 1:size(segments,2)
     Audio = segments{1,trial};
-    if numel(Audio)/Fs < 4 % only label chunks shorter than 2s
+    if numel(Audio)/Fs < 4 % only label chunks shorter than x s (here 4s)
         segments = CARL_auto_detect_on_offset(Audio, Fs, trial, segments, 2.5);
     end
 end; clear trial;
