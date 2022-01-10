@@ -1,6 +1,0 @@
-[submodule "external/audioeditor"]
-	path = external/audioeditor
-	url = https://github.com/ianesten/audioeditor
-[submodule "external/sap-voicebox"]
-	path = external/sap-voicebox
-	url = https://github.com/ImperialCollegeLondon/sap-voicebox

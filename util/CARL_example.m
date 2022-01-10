@@ -7,9 +7,16 @@
 %   (2) a structure, in which every recording corresponds to a
 %   single word/response/trial.
 
+%% get root path (script must be run)
+
+currentFile = mfilename('fullpath');
+[pathstr,~,~] = fileparts(currentFile); 
+cd(fullfile(pathstr,'..'))
+rootpath = pwd;
+
 %% add CARL ressources
 
-pn.CARL_internal = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/CARL/internal/';
+pn.CARL_internal = fullfile(rootpath, 'internal');
 addpath(pn.CARL_internal)
 
 %% Option 1: pre-existing trial structure
