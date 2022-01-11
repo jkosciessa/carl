@@ -58,7 +58,7 @@ Cell structure: 5 x trial #
 ## **Installation**
 -------------
 
-After downloading, simply add the toolbox path. The toolbox requires a version of MATLAB and has been tested with R2016b.
+After downloading, add the toolbox path. The toolbox requires a version of MATLAB and has been tested with R2016b.
 
 ## **Credits**
 -------------
