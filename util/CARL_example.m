@@ -25,13 +25,13 @@ addpath(pn.CARL_internal)
 
 % load audio data (as .wav or .mat file)
 
-pn.dataIN = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/examples/1105_StroopData_1.mat';
+pn.dataIN = fullfile(rootpath, 'util', 'stroop_example.mat');
 load(pn.dataIN)
 
 AudioData = StroopAudio; clear StroopAudio;
 
 % pre-sequence voice segments: try to mark on- & offsets of the voice segments                            
-                                                                            
+                                        
 segments = cell(5,1);
 for trial = 1:size(AudioData.audio,2)
     disp([num2str(trial), '/', num2str(size(AudioData.audio,2))]);
@@ -52,7 +52,7 @@ CARL_GUI(segments, ind, Fs, pn, info.ID, 'Labeling');
 
 %% Alternative for continous recording: automatically split into separate word 'chunks' first
 
-pn.audioFile = '/Users/kosciessa/OneDrive/Work/Dev/CARLrepos/examples/Counting-from-1-to-20.wav';
+pn.audioFile = fullfile(rootpath, 'util', 'Counting-from-1-to-20.wav');
 
 % pre-sequencing voice segments (iterate through single audio file)
 % this file is very short, if there are very long recordings, they have to
