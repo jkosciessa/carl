@@ -4,6 +4,7 @@
 *.m~
 *.xlsx
 *.mat
+*.wav
 *.png
 *.txt
 *.csv

@@ -16,8 +16,8 @@ rootpath = pwd;
 
 %% add CARL ressources
 
-pn.CARL_internal = fullfile(rootpath, 'internal');
-addpath(pn.CARL_internal)
+pn.CARL_internal = fullfile(rootpath, 'code');
+addpath(genpath(pn.CARL_internal))
 
 %% Option 1: pre-existing trial structure
 % Use this if you have a seperate voice recording for each to-be-labelled
@@ -31,13 +31,13 @@ load(pn.dataIN)
 AudioData = StroopAudio; clear StroopAudio;
 
 % pre-sequence voice segments: try to mark on- & offsets of the voice segments                            
-                                        
+
 segments = cell(5,1);
 for trial = 1:size(AudioData.audio,2)
     disp([num2str(trial), '/', num2str(size(AudioData.audio,2))]);
     Audio = AudioData.audio{1,trial}(1,:);
     Fs = AudioData.s.SampleRate;
-	segments = CARL_auto_detect_on_offset(Audio, Fs, trial, segments, 2.5);
+	segments = CARL_auto_detect_on_offset(Audio, Fs, trial, segments,0.1);
 end; clear trial;
 
 % create GUI and transcribe words manually                                
@@ -56,14 +56,14 @@ pn.audioFile = fullfile(rootpath, 'util', 'Counting-from-1-to-20.wav');
 
 % pre-sequencing voice segments (iterate through single audio file)
 % this file is very short, if there are very long recordings, they have to
-% be chunked, here I use a chunk siye of 20s, with an assumed pause between
+% be chunked, here I use a chunk size of 20s, with an assumed pause between
 % words of 0.5s
 [segments, Fs] = CARL_get_voice_segments(pn.audioFile, 20, .5);
 % try to mark on- & offsets of the actual voice segments
 for trial = 1:size(segments,2)
     Audio = segments{1,trial};
     if numel(Audio)/Fs < 4 % only label chunks shorter than x s (here 4s)
-        segments = CARL_auto_detect_on_offset(Audio, Fs, trial, segments, 2.5);
+        segments = CARL_auto_detect_on_offset(Audio, Fs, trial, segments, 0.05);
     end
 end; clear trial;
 

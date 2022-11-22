@@ -7,8 +7,8 @@ function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments,distance_s)
     alpha = 0.2;
     a = ones(1, sampling_factor)/sampling_factor;
     b = [1 alpha-1];
-    y = filter(a,b,y); %http://de.mathworks.com/help/matlab/data_analysis/filtering-data.html
-
+    y = filter(a,b,y);
+    
     [b,a] = butter(6,0.01);
     y = filter(b,a,y);
     y = y.^2;
@@ -44,8 +44,8 @@ function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments,distance_s)
         offsets(end+1,:) = size(z,1);
     end;
 
-    Limits(:, 1)        = onsets - 0.25*Fs;
-    Limits(:, 2)        = offsets + 0.25*Fs;
+    Limits(:, 1)        = onsets - 0.5*distance_s*Fs;
+    Limits(:, 2)        = offsets + 0.5*distance_s*Fs;
 
     if ~isempty (Limits(Limits <= 0))
         Limits(Limits <= 0) = 1;
