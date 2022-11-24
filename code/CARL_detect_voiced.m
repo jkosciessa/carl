@@ -1,7 +1,5 @@
 function [segments, Fs] = CARL_detect_voiced(x, Fs , temp ,segments,distance_s)
 
-    % based on http://www.mathworks.com/matlabcentral/fileexchange/28826-silence-removal-in-speech-signals/content/detectVoiced.m
-
     y = abs(hilbert(x));
     sampling_factor = round(size(x,1)/Fs);
     alpha = 0.2;

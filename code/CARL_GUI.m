@@ -27,7 +27,7 @@ classdef CARL_GUI < handle
     % 6. amplitudes (user selected interval)
     % 7. sample points (continuous; user selected interval)
     
-    % 2015 Julian Kosciessa (julian.kosciessa@gmail.com)
+    % 2015 Julian Kosciessa
     
     properties (Access = private)
         FigureHandle                % Handle to main figure window
