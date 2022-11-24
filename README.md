@@ -1,7 +1,8 @@
 # **CARL: Computer-Assisted Response Labeler**
-
 ## **Overview**
 --------
+
+<img src="util/logo.png" style="float: right" alt="logo" width="30%"/>
 
 Computer-Assisted Response Labeler (CARL) is a MATLAB GUI tool that aims to speed-up manual labeling of short verbal responses. It has been particularly developed with the goal of speeding up the labeling of verbal recordings from psychological experiments.
 
@@ -12,12 +13,15 @@ It facilitates labeling by (a) splitting long recordings into word chunks (if no
 
 **Loading audio data**
 
-The tool has only been tested with .wav inputs.
-Alternatively, a structure can be directly provided.
+To load audio data, .wav files can be directly read in. Alternatively, a structure can be directly provided. Both workflows are demonstrated in the ./util/example.m script.
 
-**Pre-labeling**
+**Splitting continuous recordings into individual words**
 
-CARL has been designed to quickly label short voice recordings of single words. Pre-labeling uses sound energy properties to roughly estimate speech on- and offsets.
+This optional step attempts to identify individual word chunks from a continuous recording (see example #2 in the ```example.m``` script).
+
+**Pre-labeling individual word on-/offsets**
+
+CARL has been designed to quickly label short voice recordings of single words. Pre-labeling uses sound energy properties to roughly estimate speech on- and offsets. Sensitivity can be adjusted via the ```threshold``` parameter.
 
 **GUI usage**
 
@@ -63,7 +67,7 @@ After downloading, add the toolbox path. The toolbox requires a version of MATLA
 ## **Credits**
 -------------
 
-Splitting of continuous recordings is partly adapted from http://www.mathworks.com/matlabcentral/fileexchange/28826-silence-removal-in-speech-signals/
+Splitting of continuous recordings is partly adapted from [the silenceRemoval toolbox](http://www.mathworks.com/matlabcentral/fileexchange/28826-silence-removal-in-speech-signals/) by Theodoros Giannakopoulos.
 
 ## **License**
 -------------
