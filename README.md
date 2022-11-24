@@ -64,6 +64,12 @@ Cell structure: 5 x trial #
 
 After downloading, add the toolbox path. The toolbox requires a version of MATLAB and has been tested with R2016b.
 
+**Example files**
+
+Example files can be downloaded via the ```get-example-data.sh``` script and should be placed in the ```util``` directory. Example files have the following doi.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7358140.svg)](https://doi.org/10.5281/zenodo.7358140)
+
 ## **Credits**
 -------------
 
