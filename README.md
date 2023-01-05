@@ -1,10 +1,11 @@
 # **CARL: Computer-Assisted Response Labeler**
+[![DOI](https://zenodo.org/badge/444434425.svg)](https://zenodo.org/badge/latestdoi/444434425)
 ## **Overview**
 --------
 
 <img src="util/logo.png" style="float: right" alt="logo" width="30%"/>
 
-Computer-Assisted Response Labeler (CARL) is a MATLAB GUI tool that aims to speed-up manual labeling of short verbal responses. It has been particularly developed with the goal of speeding up the labeling of verbal recordings from psychological experiments.
+The Computer-Assisted Response Labeler (CARL) is a MATLAB GUI tool that aims to speed-up manual labeling of short verbal responses. It has been particularly developed with the goal of speeding up the labeling of verbal recordings from psychological experiments.
 
 It facilitates labeling by (a) splitting long recordings into word chunks (if not already provided by the user as separate words), (b) automatically pre-labeling word on- and offsets based on sound energy, (c) allowing quick manual refinement of sound on- and offsets via drag and drop, (d) providing a few options for label speed-up, e.g., auto-starting only the pre-labeled portions of the recording, (e) allows to manually split chunks containing multiple words into separate ‘trials’ or segments.
 
