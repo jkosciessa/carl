@@ -78,6 +78,8 @@ Example files have the following doi.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7358140.svg)](https://doi.org/10.5281/zenodo.7358140)
 
+*Note: The example script starts by setting the relative path within MATLAB to the folder containing the current (example.m) script. Tis will only properly work if the script is run. To do so, but allow running the script line-by-line, set a breakpoint following the initial section and run the script.*
+
 ## **Credits**
 -------------
 
