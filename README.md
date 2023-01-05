@@ -6,7 +6,7 @@
 
 Computer-Assisted Response Labeler (CARL) is a MATLAB GUI tool that aims to speed-up manual labeling of short verbal responses. It has been particularly developed with the goal of speeding up the labeling of verbal recordings from psychological experiments.
 
-It facilitates labeling by (a) splitting long recordings into word chunks (if not provided as a basis for labeling), (b) automatically pre-labeling word on- and offsets based on sound energy, (c) allowing quick manual refinement of sound on- and offsets via drag and drop, (d) providing a few options for label speed-up, e.g., auto-starting only the pre-labeled portions of the recording, (e) allows to manually split chunks containing multiple words into separate ‘trials’/segments.
+It facilitates labeling by (a) splitting long recordings into word chunks (if not already provided by the user as separate words), (b) automatically pre-labeling word on- and offsets based on sound energy, (c) allowing quick manual refinement of sound on- and offsets via drag and drop, (d) providing a few options for label speed-up, e.g., auto-starting only the pre-labeled portions of the recording, (e) allows to manually split chunks containing multiple words into separate ‘trials’ or segments.
 
 ## **Documentation**
 -------------
@@ -66,7 +66,15 @@ After downloading, add the toolbox path. The toolbox requires a version of MATLA
 
 **Example files**
 
-Example files can be downloaded via the ```get-example-data.sh``` script and should be placed in the ```util``` directory. Example files have the following doi.
+Example files can be downloaded via the ```get-example-data.sh``` script and should be placed in the ```util``` directory. If you want to clone this tool alongside example files, you can execute the following code:
+
+```
+git clone https://github.com/jkosciessa/carl.git
+cd ./carl/util/
+./get-example-data.sh
+```
+
+Example files have the following doi.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7358140.svg)](https://doi.org/10.5281/zenodo.7358140)
 
